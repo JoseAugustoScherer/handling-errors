@@ -9,35 +9,70 @@ public class Reservation {
     SimpleDateFormat sdf = new SimpleDateFormat( "dd/MM/yyyy" );
 
     private int roomNumber;
-    private Date checkin;
-    private Date checkout;
+    private Date checkIn;
+    private Date checkOut;
 
     public Reservation() {
 
     }
 
-    public Reservation( int roomNumber, Date checkin, Date checkout ) {
+    public Reservation( int roomNumber, Date checkIn, Date checkOut ) {
         this.roomNumber = roomNumber;
-        this.checkin = checkin;
-        this.checkout = checkout;
+        this.checkIn = checkIn;
+        this.checkOut = checkOut;
+    }
+
+    public int getRoomNumber() {
+        return roomNumber;
+    }
+
+    public void setRoomNumber(int roomNumber) {
+        this.roomNumber = roomNumber;
+    }
+
+    public Date getCheckIn() {
+        return checkIn;
+    }
+
+    public void setCheckIn(Date checkIn) {
+        this.checkIn = checkIn;
+    }
+
+    public Date getCheckOut() {
+        return checkOut;
+    }
+
+    public void setCheckOut(Date checkOut) {
+        this.checkOut = checkOut;
     }
     
     public long duration() {
-        long diff = checkout.getTime() - checkin.getTime();
+        long diff = checkOut.getTime() - checkIn.getTime();
         return TimeUnit.DAYS.convert( diff, TimeUnit.MILLISECONDS );
     }
 
-    public void updateDates( Date checkin, Date checkout ) {
-        this.checkin = checkin;
-        this.checkout = checkout;
+    public String updateDates( Date checkIn, Date checkOut ) {
+        Date now = new Date();
+
+        if ( checkIn.before( now ) || checkOut.before( now ) ) {
+            return "Error in reservation: Reservation dates for update must be future dates";
+        } 
+        else if ( !checkOut.after(checkIn) ) {
+            return "Error in reservation: Check-out date must be after check-in date";
+        }
+
+        this.checkIn = checkIn;
+        this.checkOut = checkOut;
+
+        return null;
     }
 
     @Override
     public String toString(){
         return "Reservatio: "
         + "Room " + roomNumber
-        + ", check-in: " + sdf.format( checkin )
-        + ", check-out: " + sdf.format( checkout )
+        + ", check-in: " + sdf.format( checkIn )
+        + ", check-out: " + sdf.format( checkOut )
         + ", " + duration() + " nights.";
     }
 }
